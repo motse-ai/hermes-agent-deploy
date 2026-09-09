@@ -1,0 +1,26 @@
+# Secrets
+.env
+
+# Runtime data
+*.db
+*.db-shm
+*.db-wal
+logs/
+sessions/
+cache/
+kanban/
+state/
+cron/
+memory*/
+image_cache/
+audio_cache/
+sandboxes/
+pairing/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# OS
+.DS_Store
