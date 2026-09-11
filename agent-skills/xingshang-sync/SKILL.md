@@ -111,10 +111,25 @@ Luckee 2.0 自动执行广告操作
 
 使用 `list_configs` MCP 工具获取所有现有配置。
 
-**重要**：Token Service 中可能包含其他团队的配置（如 X-sense、Moqi 等）。本 skill **只处理星商（Xingshang）相关的配置**，即：
-- 标题中包含 "星商"、"Garvee"、"拉幕"、"奶泡棒"、"杨总水杯"、"虎一" 等关键词的配置
-- 或者 `CONFIG_SOURCE` 为 `dingtalk_sync` 的配置
-- 其他团队的配置**不要展示、不要修改**
+**重要**：Token Service 中包含多个团队的配置（180个）。本 skill **只处理星商相关的配置**，通过 title 字段关键词匹配：
+
+**星商标识关键词**（匹配任一即可）：
+- `星商` — 星商主体（最多，~120+个）
+- `星驰` — 星驰-蓝极系列（12个）
+- `星乐` — 星乐系列（8个）
+- `Garvee` — GarveeHome/Garvee地毯
+- `拉幕` — 拉幕系列
+- `奶泡棒` — 奶泡棒系列
+- `杨总水杯` — 杨总水杯系列
+- `虎一` — 虎一 VC 系列
+
+**过滤逻辑**：
+```python
+XINGSHANG_KEYWORDS = ["星商", "星驰", "星乐", "Garvee", "拉幕", "奶泡棒", "杨总水杯", "虎一"]
+is_xingshang = any(kw in item["title"] for kw in XINGSHANG_KEYWORDS)
+```
+
+**不要展示、不要修改**其他团队的配置（如 X-sense、Moqi、YST、优居智能、悦浮思 等）
 
 ### Step 3: 对比分析
 
