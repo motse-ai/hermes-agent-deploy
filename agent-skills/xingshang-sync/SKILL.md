@@ -74,23 +74,12 @@ Luckee 2.0 自动执行广告操作
 | `gr613x5xjpt3h8i4elaa6` | 运营人员 | 无直接对应 |
 | `7mun3k5ncsj73n837zp4b` | 部门 | 无直接对应 |
 
-### Token Service 现有配置（14个）
+### Token Service 配置
 
-当前已配置的 ASIN（供参考）：
-- `B0F389DLFG` - 奶泡棒MF03 美国
-- `B0F9FS822W` - 奶泡棒MF04 加拿大
-- `B0FKBPZB2H` - 拉幕 大衣
-- `B01306P1TK` - 拉幕 打底裤
-- `B0DTHGSHGB` - 拉幕玩具 复活节
-- `B0FKH7R52C` - 星商 COZY地毯
-- `B0FHGGQLZN` - 星商 Garvee地毯
-- `B091DTM448` - 杨总水杯 CF007 64oz
-- `B093KDJXVM` - 杨总水杯 CF007黑色128oz
-- `B0CSSR45C6` - 杨总水杯 CF036紫色64oz
-- `B0CSSYKXB3` - 杨总水杯 CF037紫色64oz
-- `B0DZ26JS8G` - 杨总水杯 CF041紫色32oz
-- `B0CZCX5WDC` - 虎一 VC HT04 探针
-- `B09JQM7L4T` - 旧配置（仅有 CONFIG_SOURCE）
+- 生产环境地址：`https://token.motse.ai`
+- 当前配置数量：**动态变化**，通过 MCP 工具 `list_configs` 实时查询
+- 配置项以**父 ASIN** 为唯一标识
+- **不要硬编码 ASIN 列表**，始终通过 MCP 工具获取最新数据
 
 ## 触发条件
 
@@ -121,6 +110,11 @@ Luckee 2.0 自动执行广告操作
 ### Step 2: 读取 Token Service 当前配置
 
 使用 `list_configs` MCP 工具获取所有现有配置。
+
+**重要**：Token Service 中可能包含其他团队的配置（如 X-sense、Moqi 等）。本 skill **只处理星商（Xingshang）相关的配置**，即：
+- 标题中包含 "星商"、"Garvee"、"拉幕"、"奶泡棒"、"杨总水杯"、"虎一" 等关键词的配置
+- 或者 `CONFIG_SOURCE` 为 `dingtalk_sync` 的配置
+- 其他团队的配置**不要展示、不要修改**
 
 ### Step 3: 对比分析
 
@@ -185,31 +179,22 @@ Luckee 2.0 自动执行广告操作
 
 **用户**: 同步星商配置
 **Bot**: 正在读取钉钉AI表格...
-**Bot**: 找到 24 条记录。对比当前 Token Service（14个配置），发现：
-  - 钉钉表格有 23 个 ASIN Token Service 中没有
-  - Token Service 有 13 个 ASIN 钉钉表格中没有
-  - 唯一重叠：B09JQM7L4T（旧配置）
+**Bot**: 找到 24 条星商记录。对比当前 Token Service 中的星商配置，发现：
+  - 钉钉表格有 20 个 ASIN Token Service 中没有（需要新增）
+  - Token Service 有 5 个星商 ASIN 钉钉表格中没有（可能已下架）
+  - 重叠的 ASIN 中有 3 个字段需要更新
   
-  Token Service 的配置包含领星凭证等敏感信息，这些不在钉钉表格中。
-  需要确认：是否要将钉钉表格中的 ASIN 新增到 Token Service？
-  （需要提供领星凭证等信息才能完整配置）
-
-**用户**: 是的，新增 B0HGYBQ5KC
-**Bot**: 好的，请提供以下信息：
-  - 旺通 Profile ID
-  - 领星账号名
-  - SKU 列表
-  - 国家
-  - 目标 ACoS
-  - 日预算
+  注意：Token Service 中还有其他团队的配置（X-sense、Moqi 等），这些不会被修改。
   
-  或者，如果只是想在 Token Service 中创建一个占位配置，请回复"先创建空配置"。
+  是否要执行同步？需要人工审批。
 
-**用户**: 先创建空配置
+**用户**: 是的，同步
 **Bot**: 正在创建备份...
 **Bot**: 备份完成 (snapshot: 20260911120000)。已创建提案 (prop_20260911120000_1234)。
   变更内容：
-  - 新增 B0HGYBQ5KC（配置来源: dingtalk_sync）
+  - 新增 20 个 ASIN（配置来源: dingtalk_sync）
+  - 更新 3 个 ASIN 的 SKU_LIST
+  - 5 个 ASIN 标记为可能下架（待确认）
   
   请回复 "批准 prop_20260911120000_1234" 执行变更。
 
