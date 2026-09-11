@@ -111,25 +111,42 @@ Luckee 2.0 自动执行广告操作
 
 使用 `list_configs` MCP 工具获取所有现有配置。
 
-**重要**：Token Service 中包含多个团队的配置（180个）。本 skill **只处理星商相关的配置**，通过 title 字段关键词匹配：
+**重要**：Token Service 中包含多个团队的配置（180个）。本 skill **只处理星商相关的配置**。
 
-**星商标识关键词**（匹配任一即可）：
-- `星商` — 星商主体（最多，~120+个）
-- `星驰` — 星驰-蓝极系列（12个）
-- `星乐` — 星乐系列（8个）
-- `Garvee` — GarveeHome/Garvee地毯
-- `拉幕` — 拉幕系列
-- `奶泡棒` — 奶泡棒系列
-- `杨总水杯` — 杨总水杯系列
-- `虎一` — 虎一 VC 系列
+**过滤方式（按优先级）**：
+
+1. **首选：检查 `XINGSHANG` 字段**（最可靠）
+   - 星商配置有专属字段 `config.XINGSHANG`，包含 `name`、`store_name`、`campaign_prefix`
+   - 只要 `config.XINGSHANG` 存在且非空，就是星商配置
+
+2. **备选：title 关键词匹配**
+   - 仅当 `XINGSHANG` 字段不存在时使用
+   - 关键词：`星商`、`星驰`、`星乐`
 
 **过滤逻辑**：
 ```python
-XINGSHANG_KEYWORDS = ["星商", "星驰", "星乐", "Garvee", "拉幕", "奶泡棒", "杨总水杯", "虎一"]
-is_xingshang = any(kw in item["title"] for kw in XINGSHANG_KEYWORDS)
+def is_xingshang_config(item):
+    config = item.get("config", {})
+    # 优先检查 XINGSHANG 字段
+    if config.get("XINGSHANG"):
+        return True
+    # 备选：title 关键词
+    title = item.get("title", "") or ""
+    return any(kw in title for kw in ["星商", "星驰", "星乐"])
 ```
 
-**不要展示、不要修改**其他团队的配置（如 X-sense、Moqi、YST、优居智能、悦浮思 等）
+**星商配置的 `XINGSHANG` 字段结构**：
+```json
+{
+  "XINGSHANG": {
+    "name": "星乐 2026-08 - B0FP298DNM",
+    "store_name": "GarveeHome_US",
+    "campaign_prefix": "AI-SP-B0FP298DNM-"
+  }
+}
+```
+
+**不要展示、不要修改**没有 `XINGSHANG` 字段且 title 不含星商标识的配置
 
 ### Step 3: 对比分析
 
