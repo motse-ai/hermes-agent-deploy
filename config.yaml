@@ -1,0 +1,52 @@
+_config_version: 33
+agent:
+  system_prompt_file: ~/.hermes/SOUL.md
+display:
+  platforms:
+    dingtalk:
+      show_reasoning: false
+      streaming: true
+      tool_progress: 'off'
+  tool_progress_command: true
+gateway:
+  platforms:
+    dingtalk:
+      enabled: true
+      extra:
+        require_mention: true
+linear:
+  api_key: ${LINEAR_API_KEY}
+  team_key: LUC
+mcp_servers:
+  linear:
+    auth: header
+    enabled: true
+    headers:
+      Authorization: Bearer ${LINEAR_API_KEY}
+    timeout: 120
+    url: https://mcp.linear.app/mcp
+  token_service:
+    args:
+      - /home/jasper/hermes-agent/mcp/token_service_mcp.py
+    command: /home/jasper/hermes-agent/venv/bin/python3
+    enabled: true
+    env:
+      TOKEN_SERVICE_URL: https://token.motse.ai
+      TS_ADMIN_PASS: ${TS_ADMIN_PASS}
+      TS_ADMIN_USER: admin
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+model:
+  api_key: ${MINIMAX_API_KEY}
+  base_url: http://34.143.132.97:26666/v1
+  default: MiniMax-M2.7
+  provider: custom
+skills:
+  enabled:
+    - productivity/linear
+    - xingshang-sync
+terminal:
+  backend: local
+approvals:
+  mode: off
